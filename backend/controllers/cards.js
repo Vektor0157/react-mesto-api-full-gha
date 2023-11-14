@@ -7,7 +7,7 @@ const ForbiddenError = require('../errors/ForbiddenError');
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.status(201).send({ data: card }))
+    .then((card) => res.status(201).send({ data: card._id }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при создании карты.'));
@@ -20,7 +20,10 @@ const createCard = (req, res, next) => {
 const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => {
-      res.send({ cards });
+      if (cards.length === 0) {
+        return res.status(200).send({ message: 'Список карточек пуст' });
+      }
+      return res.status(200).send({ cards });
     })
     .catch(next);
 };
@@ -33,7 +36,7 @@ const deleteCard = (req, res, next) => {
         throw new NotFoundError('Карточка по указанному _id не найдена.');
       }
       if (!card.owner.equals(req.user._id)) {
-        throw new ForbiddenError('Невозможно удалить чужую карточку.'); // Тут генерируется ошибка с кодом 403
+        throw new ForbiddenError('Невозможно удалить чужую карточку.');
       }
       card.deleteOne()
         .then(() => {
@@ -59,7 +62,7 @@ const likeCard = (req, res, next) => {
   )
     .then((card) => {
       if (card) {
-        res.send({ data: card });
+        res.status(200).send({ data: card });
       } else {
         throw new NotFoundError('Карточка с указанным _id не найдена');
       }

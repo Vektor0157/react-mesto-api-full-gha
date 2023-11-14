@@ -82,16 +82,16 @@ const getUserById = (req, res, next) => {
     })
     .catch(next);
 };
-// eslint-disable-next-line consistent-return
+
 const updateProfile = (req, res, next) => {
   const { name, about } = req.body;
-  const userId = req.user._id;
+  const userId = req.user;
   User.findByIdAndUpdate(userId, { name, about }, { new: true })
     .then((user) => {
       if (!user) {
-        return res.status(NotFoundError).send({ message: 'User not found' });
+        throw new NotFoundError({ message: 'User not found' });
       }
-      return res.send(user);
+      return res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -112,13 +112,13 @@ const getCurrentUser = (req, res, next) => {
 
 const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  const userId = req.user._id;
+  const userId = req.user;
   User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        return next(new NotFoundError('User not found'));
+        throw new NotFoundError({ message: 'User not found' });
       }
-      return res.send(user);
+      return res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
