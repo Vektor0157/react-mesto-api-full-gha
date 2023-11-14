@@ -1,0 +1,10 @@
+.auth {
+	font-family: 'Inter', Arial, sans-serif;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin: 0 auto;
+	padding-top: 60px;
+	color: #FFFFFF;
+}

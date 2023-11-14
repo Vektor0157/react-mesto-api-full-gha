@@ -1,0 +1,10 @@
+.header__close-btn{
+	display: none;
+	width: 30px;
+	height: 30px;
+	border: 0;
+	background-size: contain;
+	cursor: pointer;
+	transition: 1s all;
+	background: url("../../../images/close-icon.svg") no-repeat;
+}

@@ -1,0 +1,7 @@
+.element__calculator{
+	position: relative;
+	bottom: -16px;
+	margin: 0;
+	font-size: 13px;
+	line-height: 16px;
+}

@@ -1,0 +1,24 @@
+.popup__block-input{
+	position: relative;
+	max-width: 356px;
+	display: flex;
+	flex-direction: column;
+	margin: 0 36px 48px;
+}
+.popup__block-input:first-of-type{
+	margin: 0 36px 40px;
+}
+
+@media screen and (max-width: 767px){
+	.popup__block-input{
+		max-width: 238px;
+		margin: 0 auto 30px;
+	}
+	.popup__block-input:first-of-type{
+		padding: 0;
+		margin: 0 22px 30px;
+	}
+	.popup__block-input:last-of-type{
+		margin: 0 auto;
+	}
+}

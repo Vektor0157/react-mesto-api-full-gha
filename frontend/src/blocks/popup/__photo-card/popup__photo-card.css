@@ -1,0 +1,5 @@
+.popup__photo-card{
+	display: flex;
+	flex-direction: column;
+	position: relative;
+}

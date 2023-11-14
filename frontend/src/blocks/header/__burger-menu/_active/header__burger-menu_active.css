@@ -1,0 +1,9 @@
+.header__burger-menu_active{
+	display: block;
+	width: 100%;
+}
+@media screen and (min-width: 767px) {
+	.header__burger-menu_active{
+		display: none;
+	}
+}

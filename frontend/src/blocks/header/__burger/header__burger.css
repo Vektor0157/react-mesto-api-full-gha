@@ -1,0 +1,8 @@
+.header__burger{
+	align-self: center;
+}
+@media screen and (min-width: 767px) {
+	.header__burger{
+		display: none;
+	}
+}

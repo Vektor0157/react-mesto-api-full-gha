@@ -1,0 +1,13 @@
+.header__burger-btn{
+	display: none;
+	width: 24px;
+	height: 18px;
+	background: url("../../../images/btnBurger.svg");
+	border: 0;
+	background-size: contain;
+	cursor: pointer;
+	transition: 1s all;
+}
+.header__burger-btn:hover{
+	opacity: 0.6;
+}

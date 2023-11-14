@@ -1,0 +1,6 @@
+.header__close-btn_active{
+	display: block;
+}
+.header__close-btn_active:hover{
+	opacity: 0.6;
+}

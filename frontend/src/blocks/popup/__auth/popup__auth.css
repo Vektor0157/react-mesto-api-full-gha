@@ -1,0 +1,13 @@
+.popup__auth{
+	width: 120px;
+	height: 120px;
+	margin-top: 60px;
+	background: url("../../../images/authOk.svg");
+
+}
+
+@media screen and (max-width: 600px){
+	.popup__auth{
+		margin-top: 50px;
+	}
+}
