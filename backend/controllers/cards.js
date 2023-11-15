@@ -20,14 +20,14 @@ const createCard = (req, res, next) => {
 const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => {
-      res.send({ cards });
+      res.send({ data: cards });
     })
     .catch(next);
 };
 // Обработчик для DELETE /cards/:cardId
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  Card.findById(cardId)
+  Card.findById({ _id: cardId })
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка по указанному _id не найдена.');
@@ -41,6 +41,12 @@ const deleteCard = (req, res, next) => {
         })
         .catch(next);
     })
+    .then((deletedCard) => {
+      if (!deletedCard) {
+        throw new NotFoundError('Карточка уже была удалена');
+      }
+      res.send({ data: deletedCard });
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Некорректный формат параметра cardId.'));
@@ -52,8 +58,9 @@ const deleteCard = (req, res, next) => {
 
 // Обработчик для PUT /cards/:cardId/likes
 const likeCard = (req, res, next) => {
+  const { cardId } = req.params;
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
@@ -69,8 +76,9 @@ const likeCard = (req, res, next) => {
 
 // Обработчик для DELETE /cards/:cardId/likes
 const dislikeCard = (req, res, next) => {
+  const { cardId } = req.params;
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    cardId,
     { $pull: { likes: req.user._id } },
     { new: true },
   )

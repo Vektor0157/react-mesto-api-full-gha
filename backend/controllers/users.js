@@ -39,7 +39,7 @@ const createUser = (req, res, next) => {
       if (err.code === 11000) {
         next(new ConflictError('Пользователь с данным email уже существует'));
       } else if (err.name === 'ValidationError') {
-        next(new BadRequestError(`${Object.values(err.errors).map((error) => error.message).join(', ')}`));
+        next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);
       }
@@ -76,18 +76,17 @@ const getUserById = (req, res, next) => {
   User.findById(userId)
     .then((user) => {
       if (user) {
-        res.send({ user });
-      } else {
-        throw new NotFoundError('User not found');
+        return res.send(user);
       }
+      throw new NotFoundError('User not found');
     })
     .catch(next);
 };
 
 const updateProfile = (req, res, next) => {
   const { name, about } = req.body;
-  const userId = req.user._id;
-  User.findByIdAndUpdate(userId, { name, about }, { new: true })
+  const { userId } = req.user;
+  User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         return res.status(NotFoundError).send({ message: 'User not found' });
@@ -104,16 +103,20 @@ const updateProfile = (req, res, next) => {
 };
 
 const getCurrentUser = (req, res, next) => {
-  User.findById(req.user)
+  const { userId } = req.user;
+  User.findById(userId)
     .then((user) => {
-      res.send({ user });
+      if (user) {
+        return res.send(user);
+      }
+      throw new NotFoundError('Пользователь с таким id не найден');
     })
     .catch(next);
 };
 
 const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  const userId = req.user._id;
+  const { userId } = req.user;
   User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
