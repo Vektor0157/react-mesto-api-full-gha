@@ -25,13 +25,14 @@ const createUser = (req, res, next) => {
       password: hash,
     }))
     .then((user) => {
-      const { _id } = user;
-      return res.status(201).send({
-        email,
-        name,
-        about,
-        avatar,
-        _id,
+      res.status(201).send({
+        data: {
+          name: user.name,
+          email: user.email,
+          about: user.about,
+          avatar: user.avatar,
+          _id: user._id,
+        },
       });
     })
     .catch((err) => {
@@ -75,22 +76,23 @@ const getUserById = (req, res, next) => {
   User.findById(userId)
     .then((user) => {
       if (user) {
-        return res.send({ user });
+        res.send({ user });
+      } else {
+        throw new NotFoundError('User not found');
       }
-      throw new NotFoundError('User not found');
     })
     .catch(next);
 };
 
 const updateProfile = (req, res, next) => {
   const { name, about } = req.body;
-  const userId = req.user;
-  User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
+  const userId = req.user._id;
+  User.findByIdAndUpdate(userId, { name, about }, { new: true })
     .then((user) => {
-      if (user) {
-        res.status(200).send(user);
+      if (!user) {
+        return res.status(NotFoundError).send({ message: 'User not found' });
       }
-      throw new NotFoundError('User not found');
+      return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -104,23 +106,20 @@ const updateProfile = (req, res, next) => {
 const getCurrentUser = (req, res, next) => {
   User.findById(req.user)
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('User not found');
-      }
-      res.status(200).send(user);
+      res.send({ user });
     })
     .catch(next);
 };
 
 const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  const userId = req.user;
+  const userId = req.user._id;
   User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('User not found');
+        return next(new NotFoundError('User not found'));
       }
-      res.status(200).send(user);
+      return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
