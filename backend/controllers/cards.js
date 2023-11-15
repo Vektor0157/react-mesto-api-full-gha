@@ -43,12 +43,6 @@ const deleteCard = (req, res, next) => {
         })
         .catch(next);
     })
-    .then((deletedCard) => {
-      if (!deletedCard) {
-        throw new NotFoundError('Карточка уже была удалена');
-      }
-      res.send({ data: deletedCard });
-    })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Некорректный формат параметра cardId.'));
