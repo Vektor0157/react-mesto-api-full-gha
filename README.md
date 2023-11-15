@@ -9,7 +9,7 @@
 
 ## Ссылки на проект
 
-IP-адрес 158.160.48.179
+IP 158.160.48.179
 
 Frontend https://vektor.nomoredomainsmonster.ru
 
