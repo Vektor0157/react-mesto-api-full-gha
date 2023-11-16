@@ -2,7 +2,6 @@
 	width: 120px;
 	height: 120px;
 	margin-top: 60px;
-	background: url("../../../images/authFail.svg");
 	align-self: center;
 }
 @media screen and (max-width: 600px){
