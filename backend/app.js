@@ -22,7 +22,13 @@ mongoose.connect(`${MONGO_URL}`, {
 // eslint-disable-next-line no-console
 }).then(() => console.log('Connected to MongoDB'));
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'https://localhost:3000',
+    'https://vektor.nomoredomainsmonster.ru',
+    'http://vektor.nomoredomainsmonster.ru'],
+}));
 
 app.use(requestLogger);
 app.get('/crash-test', () => {
