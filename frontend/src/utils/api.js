@@ -1,9 +1,6 @@
-import {apiSettings} from "./constants.js";
-
-export class Api {
+class Api {
 	constructor (options) {
 		this._baseUrl = options.baseUrl;
-		this._headers = options.headers;
 	}
 
 	_checkData (res) {
@@ -16,89 +13,112 @@ export class Api {
 	getUserInfo() {
 		return fetch(`${this._baseUrl}/users/me`, {
 			method: 'GET',
-			headers: this._headers
+			headers: {
+				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+				'Content-Type': 'application/json'
+			}
 		})
-			.then(this._checkData);
+		.then((res) => this._checkData(res));
 	}
 
 	getInitialCards() {
 		return fetch(`${this._baseUrl}/cards`, {
 			method: 'GET',
-			headers: this._headers
+			headers: {
+				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+				'Content-Type': 'application/json'
+			}
 		})
-			.then(this._checkData);
+			.then((res) => this._checkData(res));
 	}
 
-	getInitialData() {
-		return Promise.all([this.getInitialCards(), this.getUserInfo()]);
-	}
-
-	setUserInfo(user) {
+	setUserInfo(data) {
 		return fetch(`${this._baseUrl}/users/me`, {
 			method: 'PATCH',
-			headers: this._headers,
+			headers: {
+				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+				'Content-Type': 'application/json'
+			},
 			body: JSON.stringify({
-				name: user.name,
-				about: user.about
+				name: data.name,
+				about: data.about
 			})
 		})
-			.then(this._checkData);
+			.then((res) => this._checkData(res));
 	}
 
-	addCard(card) {
+	addCard({name, link}) {
 		return fetch(`${this._baseUrl}/cards`, {
 			method: 'POST',
-			headers: this._headers,
-			body: JSON.stringify({
-				name: card.name,
-				link: card.link
-			})
+			headers: {
+				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ name, link })
 		})
-			.then(this._checkData);
+			.then((res) => this._checkData(res));
 	}
 
 	deleteCard (card) {
 		return fetch(`${this._baseUrl}/cards/${card._id}`, {
 			method: 'DELETE',
-			headers: this._headers
+			headers: {
+				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+				'Content-Type': 'application/json'
+			}
 		})
-			.then(this._checkData);
+			.then((res) => this._checkData(res));
 	}
 
 	setLike(card) {
 		return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
 			method: 'PUT',
-			headers: this._headers
+			headers: {
+				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+				'Content-Type': 'application/json'
+			}
 		})
-			.then(this._checkData);
+			.then((res) => this._checkData(res));
 	}
 
 	deleteLike(card) {
 		return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
 			method: 'DELETE',
-			headers: this._headers
+			headers: {
+				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+				'Content-Type': 'application/json'
+			}
 		})
-			.then(this._checkData);
+			.then((res) => this._checkData(res));
 	}
 
-	updateAvatar(link) {
+	updateAvatar(data) {
 		return fetch(`${this._baseUrl}/users/me/avatar`, {
 			method: 'PATCH',
-			headers: this._headers,
+			headers: {
+				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+				'Content-Type': 'application/json'
+			},
 			body: JSON.stringify({
-				avatar: link
+				avatar: data.avatar
 			})
 		})
-			.then(this._checkData);
+			.then((res) => this._checkData(res));
 	}
 
 	changeLikeCardStatus(card, likeCardStatus) {
 		return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
 			method: (likeCardStatus ? "PUT": "DELETE"),
-			headers: this._headers,
+			headers: {
+				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+				'Content-Type': 'application/json'
+			},
 		})
-			.then(this._checkData);
+			.then((res) => this._checkData(res));
 	}
 }
-const api = new Api(apiSettings);
+
+const api = new Api({ 
+	baseUrl: 'https://api.vektor.nomoredomainsmonster.ru',
+});
 export default api

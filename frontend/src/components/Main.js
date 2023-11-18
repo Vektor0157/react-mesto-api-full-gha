@@ -1,9 +1,12 @@
 import React from "react";
 import Card from "./Card.js";
-import {CurrentUserContext} from "../contexts/CurrentUserContext";
+import CurrentUserContext from "../contexts/CurrentUserContext";
 
-function Main({onEditAvatar, onEditProfile, onAddCard, onCardClick, cards, onCardLike, onCardDelete }){
+function Main({card, onEditAvatar, onEditProfile, onAddCard, onCardClick, cards, onCardLike, onCardDelete }){
 	const currentUser = React.useContext(CurrentUserContext);
+	function handleDeleteClick() {
+		onCardDelete(card);
+	}
 	return(
 		<main className="content">
 			<section className="profile">
@@ -19,12 +22,14 @@ function Main({onEditAvatar, onEditProfile, onAddCard, onCardClick, cards, onCar
 				<button className="profile__add-btn" aria-label="Добавить изображения" type="button" onClick={onAddCard}/>
 			</section>
 			<section className="elements">
-				{cards.map((card) => {
+			{cards.map((card) => {
 					return (
-						<Card key={card._id} card={card}
+						<Card
+							key={card._id}
+							card={card}
 							onCardClick={onCardClick}
 							onCardLike={onCardLike}
-							onCardDelete={onCardDelete}
+							onCardDelete={() => handleDeleteClick(card)}
 						/>
 					);
 				})}

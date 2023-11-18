@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
+import CurrentUserContext from "../contexts/CurrentUserContext";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import "../index.css";
-import Header from "./Header.js";
-import Main from "./Main.js";
-import Footer from "./Footer.js";
+import Header from "./Header";
+import Main from "./Main";
+import Footer from "./Footer";
 import PopupEditProfile from "./PopupEditProfile";
 import PopupEditAvatar from "./PopupEditAvatar";
 import PopupAddCard from "./PopupAddCard";
 import ImagePopup from "./ImagePopup";
 import api from "../utils/api";
-import auth from "../utils/auth.js";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import * as auth from "../utils/auth";
 import PopupDeleteCard from "./PopupDeleteCard";
 import ProtectedRouteElement from "./ProtectedRoute";
 import Login from "./Login";
@@ -35,11 +35,11 @@ function App() {
 	useEffect(() => {
 		loggedIn &&
 		Promise.all([api.getUserInfo(), api.getInitialCards()])
-			.then(([userData, cards]) => {
+			.then(([userData, initialCards]) => {
 				setCurrentUser(userData);
-				setCards(cards);
+				setCards(initialCards.data);
 			})
-			.catch((err) => {console.log(err, true);});
+			.catch((err) => console.log(err));
 		сheckTocken(); 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loggedIn]);
@@ -59,7 +59,6 @@ function App() {
 
 	function handleLogOut() {
 		setLoggedIn(false);
-		setEmail("");
 		localStorage.removeItem("jwt");
 		navigate("/sign-in", { replace: true });
 	}
@@ -79,10 +78,10 @@ function App() {
 	}
 
 	function сheckTocken() { 
-		const token = localStorage.getItem("jwt");
-		if (token) {
+		const jwt = localStorage.getItem("jwt");
+		if (jwt) {
 			auth
-			.getContent(token)
+			.getContent(jwt)
 			.then((res) => {
 				if (res) {
 				setLoggedIn(true);
@@ -99,32 +98,25 @@ function App() {
 
 	function handleUpdateUser(user){
 		api.setUserInfo(user)
-			.then((update) =>{
-				setCurrentUser({
-					...currentUser,
-					name: update.name,
-					about: update.about,
-				})
+			.then((data) =>{
+				setCurrentUser(data)
 				closeAllPopups()
 			})
-			.catch((err) =>{console.log(err, true)})
+			.catch((err) => console.log(err))
 	}
 
 	function handleUpdateAvatar({avatar}){
 		api.updateAvatar(avatar)
-			.then((update) =>{
-				setCurrentUser({
-					...currentUser,
-					avatar: update.avatar
-				})
+			.then((data) =>{
+				setCurrentUser(data)
 				closeAllPopups()
 			})
-			.catch((err) =>{console.log(err, true)})
+			.catch((err) => console.log(err))
 	}
-	function handleAddCard(card){
-		api.addCard(card)
+	function handleAddCard({name, link}){
+		api.addCard({name, link})
 			.then((update)=>{
-				setCards([update, ...cards])
+				setCards([update.data, ...cards])
 				closeAllPopups()
 			})
 			.catch((err)=>{console.log(err)})
@@ -173,7 +165,7 @@ function App() {
 			.then((newCard) => {
 				setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
 			})
-			.catch((err)=>{console.log(err, true)})
+			.catch((err)=> console.log(err) )
 	}
 
 	function handleCardDelete(card) {
@@ -182,7 +174,7 @@ function App() {
 				setCards(cards.filter((state) => state._id !== card._id));
 				closeAllPopups()
 			})
-			.catch((err)=>{console.log(err, true)})
+			.catch((err)=> console.log(err) )
 	}
 
 	useEffect(() => {

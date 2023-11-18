@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
+
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const ConflictError = require('../errors/ConflictError');
@@ -49,10 +50,10 @@ const createUser = (req, res, next) => {
 function login(req, res, next) {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
-    .then((user) => {
-      if (user) {
+    .then(({ _id: userId }) => {
+      if (userId) {
         const token = jwt.sign(
-          { userId: user._id },
+          { userId },
           NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key',
           { expiresIn: '7d' },
         );
