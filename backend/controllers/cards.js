@@ -6,7 +6,7 @@ const ForbiddenError = require('../errors/ForbiddenError');
 // Обработчик для POST /cards
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
-  const { userId } = req.user;
+  const { userId } = req.user._id;
   Card.create({ name, link, owner: userId })
     .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
@@ -28,8 +28,8 @@ const getCards = (req, res, next) => {
 // Обработчик для DELETE /cards/:cardId
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  const { userId } = req.user;
-  Card.findById({ _id: cardId })
+  const { userId } = req.user._id;
+  Card.findById({ cardId })
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка по указанному _id не найдена.');
@@ -55,7 +55,7 @@ const deleteCard = (req, res, next) => {
 // Обработчик для PUT /cards/:cardId/likes
 const likeCard = (req, res, next) => {
   const { cardId } = req.params;
-  const { userId } = req.user;
+  const { userId } = req.user._id;
   Card.findByIdAndUpdate(
     cardId,
     { $addToSet: { likes: userId } },
@@ -73,7 +73,7 @@ const likeCard = (req, res, next) => {
 // Обработчик для DELETE /cards/:cardId/likes
 const dislikeCard = (req, res, next) => {
   const { cardId } = req.params;
-  const { userId } = req.user;
+  const { userId } = req.user._id;
   Card.findByIdAndUpdate(
     cardId,
     { $pull: { likes: userId } },

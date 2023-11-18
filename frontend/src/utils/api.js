@@ -92,7 +92,7 @@ class Api {
 			.then((res) => this._checkData(res));
 	}
 
-	updateAvatar(data) {
+	updateAvatar(link) {
 		return fetch(`${this._baseUrl}/users/me/avatar`, {
 			method: 'PATCH',
 			headers: {
@@ -100,10 +100,10 @@ class Api {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				avatar: data.avatar
+				avatar: link
 			})
 		})
-			.then((res) => this._checkData(res));
+		.then((res) => this._checkData(res));
 	}
 
 	changeLikeCardStatus(card, likeCardStatus) {
@@ -112,9 +112,9 @@ class Api {
 			headers: {
 				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
 				'Content-Type': 'application/json'
-			},
+			}
 		})
-			.then((res) => this._checkData(res));
+		.then((res) => this._checkData(res));
 	}
 }
 

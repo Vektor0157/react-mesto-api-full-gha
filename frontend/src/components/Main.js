@@ -4,9 +4,6 @@ import CurrentUserContext from "../contexts/CurrentUserContext";
 
 function Main({card, onEditAvatar, onEditProfile, onAddCard, onCardClick, cards, onCardLike, onCardDelete }){
 	const currentUser = React.useContext(CurrentUserContext);
-	function handleDeleteClick() {
-		onCardDelete(card);
-	}
 	return(
 		<main className="content">
 			<section className="profile">
@@ -24,12 +21,10 @@ function Main({card, onEditAvatar, onEditProfile, onAddCard, onCardClick, cards,
 			<section className="elements">
 			{cards.map((card) => {
 					return (
-						<Card
-							key={card._id}
-							card={card}
+						<Card key={card._id} card={card}
 							onCardClick={onCardClick}
 							onCardLike={onCardLike}
-							onCardDelete={() => handleDeleteClick(card)}
+							onCardDelete={onCardDelete}
 						/>
 					);
 				})}
