@@ -6,7 +6,7 @@ const ForbiddenError = require('../errors/ForbiddenError');
 // Обработчик для POST /cards
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
-  const { userId } = req.user._id;
+  const { userId } = req.user;
   Card.create({ name, link, owner: userId })
     .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
