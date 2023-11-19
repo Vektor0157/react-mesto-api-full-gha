@@ -31,11 +31,13 @@ app.use(cors({
 }));
 
 app.use(requestLogger);
+
 app.get('/crash-test', () => {
   setTimeout(() => {
     throw new Error('Сервер сейчас упадёт');
   }, 0);
 });
+
 app.use('/', express.json());
 app.use('/users', auth, usersRouter);
 app.use('/cards', auth, cardsRouter);

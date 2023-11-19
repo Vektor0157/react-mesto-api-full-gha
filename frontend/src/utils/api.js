@@ -1,6 +1,6 @@
 class Api {
-	constructor (options) {
-		this._baseUrl = options.baseUrl;
+	constructor (config) {
+		this._baseUrl = config.baseUrl;
 	}
 
 	_checkData (res) {
@@ -32,7 +32,7 @@ class Api {
 			.then((res) => this._checkData(res));
 	}
 
-	setUserInfo(data) {
+	setUserInfo(user) {
 		return fetch(`${this._baseUrl}/users/me`, {
 			method: 'PATCH',
 			headers: {
@@ -40,8 +40,8 @@ class Api {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				name: data.name,
-				about: data.about
+				name: user.name,
+				about: user.about
 			})
 		})
 			.then((res) => this._checkData(res));
@@ -59,37 +59,37 @@ class Api {
 			.then((res) => this._checkData(res));
 	}
 
-	deleteCard (card) {
-		return fetch(`${this._baseUrl}/cards/${card._id}`, {
-			method: 'DELETE',
-			headers: {
-				'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-				'Content-Type': 'application/json'
-			}
+	deleteCard(cardId) { 
+		return fetch(`${this._baseUrl}/cards/${cardId}`, { 
+		method: "DELETE", 
+		headers: {
+			'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+			'Content-Type': 'application/json'
+		}
 		})
-			.then((res) => this._checkData(res));
+		.then((res) => this._checkData(res));
 	}
 
-	setLike(card) {
-		return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
-			method: 'PUT',
-			headers: {
-				'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-				'Content-Type': 'application/json'
-			}
+	setLike(cardId) {
+		return fetch(`${this._baseUrl}/cards/${cardId}/likes`, { 
+		method: "PUT",
+		headers: {
+			'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+			'Content-Type': 'application/json'
+		}
 		})
-			.then((res) => this._checkData(res));
+		.then((res) => this._checkData(res));
 	}
 
-	deleteLike(card) {
-		return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
-			method: 'DELETE',
-			headers: {
-				'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-				'Content-Type': 'application/json'
-			}
+	deleteLike(cardId) {
+		return fetch(`${this._baseUrl}/cards/${cardId}/likes`, { 
+		method: "DELETE",
+		headers: {
+			'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+			'Content-Type': 'application/json'
+		}
 		})
-			.then((res) => this._checkData(res));
+		.then((res) => this._checkData(res));
 	}
 
 	updateAvatar(link) {
@@ -100,22 +100,19 @@ class Api {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				avatar: link
+				avatar: link.avatar
 			})
 		})
 		.then((res) => this._checkData(res));
 	}
 
-	changeLikeCardStatus(card, likeCardStatus) {
-		return fetch(`${this._baseUrl}/cards/${card._id}/likes`, {
-			method: (likeCardStatus ? "PUT": "DELETE"),
-			headers: {
-				'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-				'Content-Type': 'application/json'
-			}
-		})
-		.then((res) => this._checkData(res));
-	}
+	/*changeLikeCardStatus(cardId, isLiked) {
+		if (isLiked) {
+			return this.deleteLike(cardId)
+		} else {
+			return this.setLike(cardId)
+		}
+	}*/
 }
 
 const api = new Api({ 

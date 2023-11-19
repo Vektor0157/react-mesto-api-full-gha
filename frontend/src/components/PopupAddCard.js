@@ -28,11 +28,11 @@ function PopupAddCard({isOpen, onClose, altClose ,onAddCard}){
 	return(
 		<PopupWithForm title="Новое место" name="card" submitButtonText="Создать" isOpen={isOpen} onClose={onClose} altClose={altClose} onSubmit={handleAddCardSubmit}>
 			<section className="popup__block-input">
-				<input className="popup__input popup__input_type_name" type="text" placeholder="Название" name="name" value={name} minLength="2" maxLength="40" onChange={handleChangeTitle} onFocus={handleInputSelect} required/>
+				<input className="popup__input popup__input_item_title" type="text" placeholder="Название" name="name" value={name} minLength="2" maxLength="40" onChange={handleChangeTitle} onFocus={handleInputSelect} required/>
 				<span className="popup__input-error"/>
 			</section>
 			<section className="popup__block-input">
-				<input className="popup__input popup__input_type_profession" type="url" placeholder="Ссылка на картинку" name="about" value={link} minLength="2" maxLength="200" onChange={handleChangeLink} onFocus={handleInputSelect} required/>
+				<input className="popup__input popup__input_item_link" type="url" placeholder="Ссылка на картинку" name="about" value={link} minLength="2" maxLength="200" onChange={handleChangeLink} onFocus={handleInputSelect} required/>
 				<span className="popup__input-error"/>
 			</section>
 		</PopupWithForm>

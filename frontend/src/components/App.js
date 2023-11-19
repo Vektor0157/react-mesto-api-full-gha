@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import CurrentUserContext from "../contexts/CurrentUserContext";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import "../index.css";
 import Header from "./Header";
@@ -10,7 +9,8 @@ import PopupEditAvatar from "./PopupEditAvatar";
 import PopupAddCard from "./PopupAddCard";
 import ImagePopup from "./ImagePopup";
 import api from "../utils/api";
-import * as auth from "../utils/auth";
+import * as auth from "../utils/auth.js";
+import CurrentUserContext from "../contexts/CurrentUserContext";
 import PopupDeleteCard from "./PopupDeleteCard";
 import ProtectedRouteElement from "./ProtectedRoute";
 import Login from "./Login";
@@ -35,9 +35,9 @@ function App() {
 	useEffect(() => {
 		loggedIn &&
 		Promise.all([api.getUserInfo(), api.getInitialCards()])
-			.then(([userData, initialCards]) => {
+			.then(([userData, cards]) => {
 				setCurrentUser(userData);
-				setCards(initialCards.data);
+				setCards(cards.data);
 			})
 			.catch((err) => console.log(err));
 		сheckTocken(); 
@@ -98,11 +98,15 @@ function App() {
 
 	function handleUpdateUser(user){
 		api.setUserInfo(user)
-			.then((data) =>{
-				setCurrentUser(data)
-				closeAllPopups()
+		.then((update) =>{
+			setCurrentUser({
+				...currentUser,
+				name: update.name,
+				about: update.about,
 			})
-			.catch((err) => console.log(err))
+			closeAllPopups()
+		})
+		.catch((err) => console.log(err))
 	}
 
 	function handleUpdateAvatar({avatar}){
@@ -113,6 +117,7 @@ function App() {
 			})
 			.catch((err) => console.log(err))
 	}
+	
 	function handleAddCard({name, link}){
 		api.addCard({name, link})
 			.then((update)=>{
@@ -160,21 +165,27 @@ function App() {
 	}
 
 	function handleCardLike(card) {
-		const isLiked = card.likes.some(user => user._id === currentUser._id);
-		api.changeLikeCardStatus(card._id, isLiked)
-			.then((newCard) => {
-				setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-			})
-			.catch((err) => console.log(err));
+		const isLiked = card.likes.some((user) => user === currentUser._id);
+		(isLiked ? api.deleteLike(card._id) : api.setLike(card._id, true))
+		.then((newCard) => {
+			if (newCard && newCard._id) {
+			setCards((state) =>
+				state.map((c) => (c._id === newCard._id ? newCard : c))
+			);
+			} else {
+				console.error('Неправильный формат ответа от API', newCard);
+			}
+		})
+		.catch((err) => console.log(err));
 	}
 
 	function handleCardDelete(card) {
-		api.deleteCard(card)
+		api.deleteCard(card._id)
 			.then(() => {
-				setCards(cards => cards.filter(c => c._id !== card._id));
+				setCards(cards.filter((state) => state._id !== card._id));
 				closeAllPopups()
 			})
-			.catch((err)=> console.log(err) )
+			.catch((err)=> console.log(err))
 	}
 
 	useEffect(() => {

@@ -26,34 +26,31 @@ const getCards = (req, res, next) => {
     .catch(next);
 };
 // Обработчик для DELETE /cards/:cardId
-const deleteCard = (req, res, next) => {
+function deleteCard(req, res, next) {
   const { cardId } = req.params;
   const { userId } = req.user;
   Card.findById({ _id: cardId })
     .then((card) => {
       if (!card) {
-        throw new NotFoundError('Карточка по указанному _id не найдена.');
+        throw new NotFoundError('Данные по указанному id не найдены');
       }
-      if (!card.owner.equals(userId)) {
-        throw new ForbiddenError('Невозможно удалить чужую карточку.');
+      const { owner: cardOwnerId } = card;
+      if (cardOwnerId.valueOf() !== userId) {
+        throw new ForbiddenError('Нет прав доступа');
       }
-      card.deleteOne()
-        .then(() => {
-          res.status(200).send({ message: 'Карточка удалена' });
-        })
-        .catch(next);
+      return Card.findByIdAndDelete(cardId);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Некорректный формат параметра cardId.'));
-      } else {
-        next(err);
+    .then((deletedCard) => {
+      if (!deletedCard) {
+        throw new NotFoundError('Карточка уже была удалена');
       }
-    });
-};
+      res.send({ data: deletedCard });
+    })
+    .catch(next);
+}
 
 // Обработчик для PUT /cards/:cardId/likes
-const likeCard = (req, res, next) => {
+function likeCard(req, res, next) {
   const { cardId } = req.params;
   const { userId } = req.user;
   Card.findByIdAndUpdate(
@@ -62,16 +59,19 @@ const likeCard = (req, res, next) => {
     { new: true },
   )
     .then((card) => {
-      if (card) {
-        return res.send(card);
-      }
-      throw new NotFoundError('Карточка с указанным _id не найдена');
+      if (card) return res.send({ data: card });
+      throw new NotFoundError('Карточка с указанным id не найдена');
     })
-    .catch(next);
-};
-
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные при добавлении лайка карточке'));
+      } else {
+        next(err);
+      }
+    });
+}
 // Обработчик для DELETE /cards/:cardId/likes
-const dislikeCard = (req, res, next) => {
+function dislikeCard(req, res, next) {
   const { cardId } = req.params;
   const { userId } = req.user;
   Card.findByIdAndUpdate(
@@ -80,13 +80,17 @@ const dislikeCard = (req, res, next) => {
     { new: true },
   )
     .then((card) => {
-      if (card) {
-        return res.send(card);
-      }
-      throw new NotFoundError('Карточка с указанным _id не найдена');
+      if (card) return res.send({ data: card });
+      throw new NotFoundError('Данные по указанному id не найдены');
     })
-    .catch(next);
-};
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные при снятии лайка карточки'));
+      } else {
+        next(err);
+      }
+    });
+}
 
 module.exports = {
   getCards,
