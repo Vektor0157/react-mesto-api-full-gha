@@ -27,15 +27,14 @@ const getCards = (req, res, next) => {
 };
 // Обработчик для DELETE /cards/:cardId
 const deleteCard = (req, res, next) => {
-  const { id: cardId } = req.params;
+  const { cardId } = req.params;
   const { userId } = req.user;
   Card.findById({ _id: cardId })
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка по указанному _id не найдена.');
       }
-      const { owner: cardOwnerId } = card;
-      if (cardOwnerId.valueOf() !== userId) {
+      if (!card.owner.equals(userId)) {
         throw new ForbiddenError('Невозможно удалить чужую карточку.');
       }
       card.deleteOne()
