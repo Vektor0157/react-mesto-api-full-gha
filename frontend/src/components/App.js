@@ -109,7 +109,7 @@ function App() {
 		.catch((err) => console.log(err))
 	}
 
-	function handleUpdateAvatar({avatar}){
+	function handleUpdateAvatar(avatar){
 		api.updateAvatar(avatar)
 			.then((data) =>{
 				setCurrentUser(data)
