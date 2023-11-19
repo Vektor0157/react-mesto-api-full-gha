@@ -168,9 +168,9 @@ function App() {
 		const isLiked = card.likes.some((user) => user === currentUser._id);
 		(isLiked ? api.deleteLike(card._id) : api.setLike(card._id, true))
 		.then((newCard) => {
-			if (newCard && newCard._id) {
+			if (newCard && newCard.data) {
 			setCards((state) =>
-				state.map((c) => (c._id === newCard._id ? newCard : c))
+				state.map((c) => (c._id === newCard.data._id ? newCard.data : c))
 			);
 			} else {
 				console.error('Неправильный формат ответа от API', newCard);
