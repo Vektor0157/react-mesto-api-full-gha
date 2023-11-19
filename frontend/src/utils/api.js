@@ -14,7 +14,7 @@ class Api {
 		return fetch(`${this._baseUrl}/users/me`, {
 			method: 'GET',
 			headers: {
-				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+				'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
 				'Content-Type': 'application/json'
 			}
 		})
@@ -25,7 +25,7 @@ class Api {
 		return fetch(`${this._baseUrl}/cards`, {
 			method: 'GET',
 			headers: {
-				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+				'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
 				'Content-Type': 'application/json'
 			}
 		})
@@ -36,7 +36,7 @@ class Api {
 		return fetch(`${this._baseUrl}/users/me`, {
 			method: 'PATCH',
 			headers: {
-				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+				'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
@@ -51,7 +51,7 @@ class Api {
 		return fetch(`${this._baseUrl}/cards`, {
 			method: 'POST',
 			headers: {
-				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+				'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({ name, link })
@@ -63,7 +63,7 @@ class Api {
 		return fetch(`${this._baseUrl}/cards/${card._id}`, {
 			method: 'DELETE',
 			headers: {
-				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+				'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
 				'Content-Type': 'application/json'
 			}
 		})
@@ -74,7 +74,7 @@ class Api {
 		return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
 			method: 'PUT',
 			headers: {
-				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+				'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
 				'Content-Type': 'application/json'
 			}
 		})
@@ -85,7 +85,7 @@ class Api {
 		return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
 			method: 'DELETE',
 			headers: {
-				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+				'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
 				'Content-Type': 'application/json'
 			}
 		})
@@ -96,7 +96,7 @@ class Api {
 		return fetch(`${this._baseUrl}/users/me/avatar`, {
 			method: 'PATCH',
 			headers: {
-				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+				'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
@@ -107,10 +107,10 @@ class Api {
 	}
 
 	changeLikeCardStatus(card, likeCardStatus) {
-		return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
+		return fetch(`${this._baseUrl}/cards/${card._id}/likes`, {
 			method: (likeCardStatus ? "PUT": "DELETE"),
 			headers: {
-				'authorization': `Bearer ${localStorage.getItem('jwt')}`,
+				'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
 				'Content-Type': 'application/json'
 			}
 		})

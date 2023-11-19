@@ -27,14 +27,15 @@ const getCards = (req, res, next) => {
 };
 // Обработчик для DELETE /cards/:cardId
 const deleteCard = (req, res, next) => {
-  const { cardId } = req.params;
-  const { userId } = req.user._id;
-  Card.findById({ cardId })
+  const { id: cardId } = req.params;
+  const { userId } = req.user;
+  Card.findById({ _id: cardId })
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка по указанному _id не найдена.');
       }
-      if (!card.owner.equals(userId)) {
+      const { owner: cardOwnerId } = card;
+      if (cardOwnerId.valueOf() !== userId) {
         throw new ForbiddenError('Невозможно удалить чужую карточку.');
       }
       card.deleteOne()
@@ -55,7 +56,7 @@ const deleteCard = (req, res, next) => {
 // Обработчик для PUT /cards/:cardId/likes
 const likeCard = (req, res, next) => {
   const { cardId } = req.params;
-  const { userId } = req.user._id;
+  const { userId } = req.user;
   Card.findByIdAndUpdate(
     cardId,
     { $addToSet: { likes: userId } },
@@ -63,7 +64,7 @@ const likeCard = (req, res, next) => {
   )
     .then((card) => {
       if (card) {
-        return res.send({ data: card });
+        return res.send(card);
       }
       throw new NotFoundError('Карточка с указанным _id не найдена');
     })
@@ -73,7 +74,7 @@ const likeCard = (req, res, next) => {
 // Обработчик для DELETE /cards/:cardId/likes
 const dislikeCard = (req, res, next) => {
   const { cardId } = req.params;
-  const { userId } = req.user._id;
+  const { userId } = req.user;
   Card.findByIdAndUpdate(
     cardId,
     { $pull: { likes: userId } },
@@ -81,7 +82,7 @@ const dislikeCard = (req, res, next) => {
   )
     .then((card) => {
       if (card) {
-        return res.send({ data: card });
+        return res.send(card);
       }
       throw new NotFoundError('Карточка с указанным _id не найдена');
     })
